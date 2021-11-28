@@ -1,0 +1,7 @@
+venv
+.idea/*
+notebooks/.ipynb_checkpoints/*
+.DS_Store
+.caceh/*
+.flake8/*
+__pycache__/*
