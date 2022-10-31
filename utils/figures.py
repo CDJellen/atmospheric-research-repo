@@ -2,8 +2,12 @@ import datetime
 
 import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
 import seaborn as sns
 import pandas as pd
+import numpy as np
+from scipy import stats
 
 
 def plotHistogramSubplots(df, param, name):
@@ -132,16 +136,20 @@ def plotBarWhiskerSubplots(df, param, name):
     # ax[2, 1].set_title('July 2020')
     ax[2, 2].set(xlabel="Month", ylabel=name[7])
 
+
 def plotModelEvalKDE(df, mdl, mdl_name):
     g = sns.JointGrid(data=df, x=mdl, y="Log_Cn2", space=0)
     g.plot_joint(sns.kdeplot,
-             fill=True, clip=((-16, -12), (-16, -12)),
-             thresh=0, levels=100)
+                 fill=True,
+                 clip=((-16, -12), (-16, -12)),
+                 thresh=0,
+                 levels=100)
     #g.plot_marginals(sns.histplot, color="skyblue", alpha=1, bins=25)
     #g.plot_scatter(sns.scatter, color="skyblue", alpha=1, bins=25)
 
 
-def plotDayMulti(df, idx, length, param, param2, param3, param4, param5, name2, name3, name4, name5):
+def plotDayMulti(df, idx, length, param, param2, param3, param4, param5, name2,
+                 name3, name4, name5):
     df_to_plot = df.iloc[idx:idx + length]
     dates = pd.to_datetime(df_to_plot['Timestamp'].values)
 
@@ -150,18 +158,53 @@ def plotDayMulti(df, idx, length, param, param2, param3, param4, param5, name2, 
     ax[0].set(yscale='log')
     df_to_plot.index = dates
 
-    sns.regplot(y=param, x=df_to_plot.index.values, data=df_to_plot, fit_reg=False, label='Measured Cn2', marker='+',
-                color='midnightblue', scatter_kws={'s': 5})
-    sns.regplot(y=param2, x=df_to_plot.index.values, data=df_to_plot, fit_reg=False, label=name2, marker='o',
-                color='firebrick', scatter_kws={'s': 2})
-    sns.regplot(y=param3, x=df_to_plot.index.values, data=df_to_plot, fit_reg=False, label=name3, marker='o',
-                color='darkorange', scatter_kws={'s': 2})
-    sns.regplot(y=param4, x=df_to_plot.index.values, data=df_to_plot, fit_reg=False, label=name4, marker='o',
-                color='darkorchid', scatter_kws={'s': 2})
-    sns.regplot(y=param5, x=df_to_plot.index.values, data=df_to_plot, fit_reg=False, label=name5, marker='o',
-                color='lightpink', scatter_kws={'s': 2})
-    ax[0] = sns.regplot(y=param, x=df_to_plot.index.values, data=df_to_plot, fit_reg=False, marker='o',
-                        color='midnightblue', scatter_kws={'s': 2})
+    sns.regplot(y=param,
+                x=df_to_plot.index.values,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Measured Cn2',
+                marker='+',
+                color='midnightblue',
+                scatter_kws={'s': 5})
+    sns.regplot(y=param2,
+                x=df_to_plot.index.values,
+                data=df_to_plot,
+                fit_reg=False,
+                label=name2,
+                marker='o',
+                color='firebrick',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param3,
+                x=df_to_plot.index.values,
+                data=df_to_plot,
+                fit_reg=False,
+                label=name3,
+                marker='o',
+                color='darkorange',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param4,
+                x=df_to_plot.index.values,
+                data=df_to_plot,
+                fit_reg=False,
+                label=name4,
+                marker='o',
+                color='darkorchid',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param5,
+                x=df_to_plot.index.values,
+                data=df_to_plot,
+                fit_reg=False,
+                label=name5,
+                marker='o',
+                color='lightpink',
+                scatter_kws={'s': 2})
+    ax[0] = sns.regplot(y=param,
+                        x=df_to_plot.index.values,
+                        data=df_to_plot,
+                        fit_reg=False,
+                        marker='o',
+                        color='midnightblue',
+                        scatter_kws={'s': 2})
 
     ax[0].set_ylim(1e-20, 1e-12)
     ax[0].set_xlim(dates[0], dates[-1])
@@ -182,8 +225,13 @@ def plotDayMulti(df, idx, length, param, param2, param3, param4, param5, name2, 
     ax[0].set(xlabel=dates[0].strftime("%Y/%m/%d"), ylabel='Observed Cn2')
     ax[0].fmt_xdata = mdates.DateFormatter('%H:%M')
 
-    ax[1] = sns.regplot(y='Relative_Humidity', x=df_to_plot.index.values, data=df_to_plot, fit_reg=False, marker='o',
-                        color='midnightblue', scatter_kws={'s': 2})
+    ax[1] = sns.regplot(y='Relative_Humidity',
+                        x=df_to_plot.index.values,
+                        data=df_to_plot,
+                        fit_reg=False,
+                        marker='o',
+                        color='midnightblue',
+                        scatter_kws={'s': 2})
     ax[1].set_xlim(dates[0], dates[-1])
 
     plt.setp(ax[1].get_xticklabels(), rotation=45)
@@ -205,8 +253,11 @@ def plotDayMulti(df, idx, length, param, param2, param3, param4, param5, name2, 
     mae = np.mean((np.absolute(df_to_plot[param] - df_to_plot[param2])))
     mae2 = np.mean((np.absolute(df_to_plot[param] - df_to_plot[param3])))
 
-    log_mse = np.mean(np.square(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2])))
-    log_mae = np.mean((np.absolute(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2]))))
+    log_mse = np.mean(
+        np.square(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2])))
+    log_mae = np.mean((
+        np.absolute(np.log10(df_to_plot[param]) -
+                    np.log10(df_to_plot[param2]))))
     # log_mae2 = np.mean((np.absolute(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param3]))))
 
     print(mse)
@@ -225,9 +276,19 @@ def plotDayTimeseries(df, date, param):
     # Make the plot
     f, ax = plt.subplots()
     ax.set(yscale='log')
-    sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, marker='o', color='midnightblue',
+    sns.regplot(y=param,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                marker='o',
+                color='midnightblue',
                 scatter_kws={'s': 2})
-    ax = sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, marker='o', color='midnightblue',
+    ax = sns.regplot(y=param,
+                     x=df_to_plot.index,
+                     data=df_to_plot,
+                     fit_reg=False,
+                     marker='o',
+                     color='midnightblue',
                      scatter_kws={'s': 2})
     ax.set_ylim(1e-17, 1e-13)
     ax.set(yscale='log')
@@ -245,11 +306,26 @@ def plotDayTimeseriesPrediction(df, date, param, param2):
     # Make the plot
     f, ax = plt.subplots()
     ax.set(yscale='log')
-    sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, marker='o', color='midnightblue',
+    sns.regplot(y=param,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                marker='o',
+                color='midnightblue',
                 scatter_kws={'s': 2})
-    sns.regplot(y=param2, x=df_to_plot.index, data=df_to_plot, fit_reg=False, marker='o', color='firebrick',
+    sns.regplot(y=param2,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                marker='o',
+                color='firebrick',
                 scatter_kws={'s': 2})
-    ax = sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, marker='o', color='midnightblue',
+    ax = sns.regplot(y=param,
+                     x=df_to_plot.index,
+                     data=df_to_plot,
+                     fit_reg=False,
+                     marker='o',
+                     color='midnightblue',
                      scatter_kws={'s': 2})
     ax.set_ylim(1e-17, 1e-13)
     ax.set(yscale='log')
@@ -269,12 +345,29 @@ def plotDayTimeseriesPredictionByIndexSingle(df, idx, length, param, param2):
 
     # df_to_plot.index  = df_to_plot['Timestamp']
 
-    sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label='Measured Cn2', marker='o',
-                color='midnightblue', scatter_kws={'s': 2})
-    sns.regplot(y=param2, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label='Macro-Met Cn2 Prediction',
-                marker='o', color='firebrick', scatter_kws={'s': 2})
+    sns.regplot(y=param,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Measured Cn2',
+                marker='o',
+                color='midnightblue',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param2,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Macro-Met Cn2 Prediction',
+                marker='o',
+                color='firebrick',
+                scatter_kws={'s': 2})
     # sns.regplot(y = param3, x = df_to_plot.index, data=df_to_plot, fit_reg=False, label='Offshore Model Cn2 Prediction', marker='o', color='darkorange', scatter_kws={'s':2})
-    ax = sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, marker='o', color='midnightblue',
+    ax = sns.regplot(y=param,
+                     x=df_to_plot.index,
+                     data=df_to_plot,
+                     fit_reg=False,
+                     marker='o',
+                     color='midnightblue',
                      scatter_kws={'s': 2})
     ax.set_ylim(1e-17, 1e-12)
     ax.legend()
@@ -287,8 +380,11 @@ def plotDayTimeseriesPredictionByIndexSingle(df, idx, length, param, param2):
     mae = np.mean((np.absolute(df_to_plot[param] - df_to_plot[param2])))
     # mae2 = np.mean((np.absolute(df_to_plot[param] - df_to_plot[param3])))
 
-    log_mse = np.mean(np.square(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2])))
-    log_mae = np.mean((np.absolute(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2]))))
+    log_mse = np.mean(
+        np.square(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2])))
+    log_mae = np.mean((
+        np.absolute(np.log10(df_to_plot[param]) -
+                    np.log10(df_to_plot[param2]))))
     # log_mae2 = np.mean((np.absolute(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param3]))))
 
     print(mse)
@@ -300,7 +396,8 @@ def plotDayTimeseriesPredictionByIndexSingle(df, idx, length, param, param2):
 
 
 # Time series plot of one day
-def plotDayTimeseriesPredictionByIndexBackup(df, idx, length, param, param2, param3, name2, name3):
+def plotDayTimeseriesPredictionByIndexBackup(df, idx, length, param, param2,
+                                             param3, name2, name3):
     df_to_plot = df.iloc[idx:idx + length]
     # Make the plot
     f, ax = plt.subplots()
@@ -309,13 +406,36 @@ def plotDayTimeseriesPredictionByIndexBackup(df, idx, length, param, param2, par
 
     # df_to_plot.index  = df_to_plot['Timestamp']
 
-    sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label='Measured Cn2', marker='o',
-                color='midnightblue', scatter_kws={'s': 2})
-    sns.regplot(y=param2, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label=name2, marker='o',
-                color='firebrick', scatter_kws={'s': 2})
-    sns.regplot(y=param3, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label=name3, marker='o',
-                color='darkorange', scatter_kws={'s': 2})
-    ax = sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, marker='o', color='midnightblue',
+    sns.regplot(y=param,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Measured Cn2',
+                marker='o',
+                color='midnightblue',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param2,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label=name2,
+                marker='o',
+                color='firebrick',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param3,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label=name3,
+                marker='o',
+                color='darkorange',
+                scatter_kws={'s': 2})
+    ax = sns.regplot(y=param,
+                     x=df_to_plot.index,
+                     data=df_to_plot,
+                     fit_reg=False,
+                     marker='o',
+                     color='midnightblue',
                      scatter_kws={'s': 2})
     ax.set_ylim(1e-17, 1e-12)
     ax.legend()
@@ -328,8 +448,11 @@ def plotDayTimeseriesPredictionByIndexBackup(df, idx, length, param, param2, par
     mae = np.mean((np.absolute(df_to_plot[param] - df_to_plot[param2])))
     mae2 = np.mean((np.absolute(df_to_plot[param] - df_to_plot[param3])))
 
-    log_mse = np.mean(np.square(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2])))
-    log_mae = np.mean((np.absolute(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2]))))
+    log_mse = np.mean(
+        np.square(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2])))
+    log_mae = np.mean((
+        np.absolute(np.log10(df_to_plot[param]) -
+                    np.log10(df_to_plot[param2]))))
     # log_mae2 = np.mean((np.absolute(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param3]))))
 
     print(mse)
@@ -350,13 +473,36 @@ def plotDayTimeseriesPredictionTestData(df, param, param2, param3):
 
     # df_to_plot.index  = df_to_plot['Timestamp']
 
-    sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label='Measured Cn2', marker='o',
-                color='midnightblue', scatter_kws={'s': 2})
-    sns.regplot(y=param2, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label='Random Forest Cn2 Prediction',
-                marker='o', color='firebrick', scatter_kws={'s': 2})
-    sns.regplot(y=param3, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label='Boosted Model Cn2 Prediction',
-                marker='o', color='darkorange', scatter_kws={'s': 2})
-    ax = sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, marker='o', color='midnightblue',
+    sns.regplot(y=param,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Measured Cn2',
+                marker='o',
+                color='midnightblue',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param2,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Random Forest Cn2 Prediction',
+                marker='o',
+                color='firebrick',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param3,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Boosted Model Cn2 Prediction',
+                marker='o',
+                color='darkorange',
+                scatter_kws={'s': 2})
+    ax = sns.regplot(y=param,
+                     x=df_to_plot.index,
+                     data=df_to_plot,
+                     fit_reg=False,
+                     marker='o',
+                     color='midnightblue',
                      scatter_kws={'s': 2})
     ax.set_ylim(1e-17, 1e-12)
     ax.legend()
@@ -369,8 +515,11 @@ def plotDayTimeseriesPredictionTestData(df, param, param2, param3):
     mae = np.mean((np.absolute(df_to_plot[param] - df_to_plot[param2])))
     mae2 = np.mean((np.absolute(df_to_plot[param] - df_to_plot[param3])))
 
-    log_mse = np.mean(np.square(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2])))
-    log_mae = np.mean((np.absolute(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2]))))
+    log_mse = np.mean(
+        np.square(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param2])))
+    log_mae = np.mean((
+        np.absolute(np.log10(df_to_plot[param]) -
+                    np.log10(df_to_plot[param2]))))
     # log_mae2 = np.mean((np.absolute(np.log10(df_to_plot[param]) - np.log10(df_to_plot[param3]))))
 
     print(mse)
@@ -392,12 +541,29 @@ def plotDayTimeseriesPredictionTestDataLog(df, idx, length, param, param2):
 
     # df_to_plot.index  = df_to_plot['Timestamp']
 
-    sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label='Measured Cn2', marker='o',
-                color='midnightblue', scatter_kws={'s': 2})
-    sns.regplot(y=param2, x=df_to_plot.index, data=df_to_plot, fit_reg=False, label='Random Forest Cn2 Prediction',
-                marker='o', color='firebrick', scatter_kws={'s': 2})
+    sns.regplot(y=param,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Measured Cn2',
+                marker='o',
+                color='midnightblue',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param2,
+                x=df_to_plot.index,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Random Forest Cn2 Prediction',
+                marker='o',
+                color='firebrick',
+                scatter_kws={'s': 2})
     # sns.regplot(y = param3, x = df_to_plot.index, data=df_to_plot, fit_reg=False, label='Boosted Model Cn2 Prediction', marker='o', color='darkorange', scatter_kws={'s':2})
-    ax = sns.regplot(y=param, x=df_to_plot.index, data=df_to_plot, fit_reg=False, marker='o', color='midnightblue',
+    ax = sns.regplot(y=param,
+                     x=df_to_plot.index,
+                     data=df_to_plot,
+                     fit_reg=False,
+                     marker='o',
+                     color='midnightblue',
                      scatter_kws={'s': 2})
     ax.set_ylim(-17, -12)
     ax.legend()
@@ -430,11 +596,28 @@ def plotPredictionTestData(df, param, param2, param3):
     ax.set(xscale='log')
     # df_to_plot.index  = df_to_plot['Timestamp']
 
-    sns.regplot(y=param2, x=param, data=df_to_plot, fit_reg=False, label='Random Forest Cn2 Prediction Accuracy',
-                marker='o', color='midnightblue', scatter_kws={'s': 2})
-    sns.regplot(y=param3, x=param, data=df_to_plot, fit_reg=False, label='Random Forest Cn2 Prediction', marker='o',
-                color='firebrick', scatter_kws={'s': 2})
-    ax = sns.regplot(y=param2, x=param, data=df_to_plot, fit_reg=False, marker='o', color='midnightblue',
+    sns.regplot(y=param2,
+                x=param,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Random Forest Cn2 Prediction Accuracy',
+                marker='o',
+                color='midnightblue',
+                scatter_kws={'s': 2})
+    sns.regplot(y=param3,
+                x=param,
+                data=df_to_plot,
+                fit_reg=False,
+                label='Random Forest Cn2 Prediction',
+                marker='o',
+                color='firebrick',
+                scatter_kws={'s': 2})
+    ax = sns.regplot(y=param2,
+                     x=param,
+                     data=df_to_plot,
+                     fit_reg=False,
+                     marker='o',
+                     color='midnightblue',
                      scatter_kws={'s': 2})
     ax.set_ylim(1e-17, 1e-12)
     ax.set_xlim(1e-17, 1e-12)
@@ -467,7 +650,11 @@ def plotMonthlyJointHex(df, param1, param2):
         to_plot = df[df['Month'] == month_num[x]]
         # Make the plot
         plt.figure(x)
-        sns.jointplot(x=param1, y=param2, data=to_plot, kind='hex', color='blue')
+        sns.jointplot(x=param1,
+                      y=param2,
+                      data=to_plot,
+                      kind='hex',
+                      color='blue')
         plt.title('Month = ' + str(month_num[x]))
 
 
@@ -478,7 +665,11 @@ def plotMonthlyJointKDE(df, param1, param2):
         to_plot = df[df['Month'] == month_num[x]]
         # Make the plot
         plt.figure(x)
-        sns.jointplot(x=param1, y=param2, data=to_plot, kind='kde', color='blue')
+        sns.jointplot(x=param1,
+                      y=param2,
+                      data=to_plot,
+                      kind='kde',
+                      color='blue')
         plt.title('Month = ' + str(month_num[x]))
 
 
@@ -533,7 +724,9 @@ def plotYearlyHistogram(df, param):
     plt.figure()
     sns.distplot(np.array(to_plot_param), kde=False, hist=False, fit=stats.norm)
     (mu, sigma) = stats.norm.fit(np.array(to_plot_param))
-    plt.legend(["normal dist. fit ($\mu=${0:.2g}, $\sigma=${1:.2f})".format(mu, sigma)], loc=1)
+    plt.legend([
+        "normal dist. fit ($\mu=${0:.2g}, $\sigma=${1:.2f})".format(mu, sigma)
+    ],
+               loc=1)
     xlabel = pd.Series(to_plot_param, name=param)
     sns.distplot(xlabel)
-

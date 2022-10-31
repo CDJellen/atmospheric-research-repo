@@ -5,7 +5,7 @@ import os
 
 
 def start_notebook():
-    os.system("py -m notebook")# Press Ctrl+F8 to toggle the breakpoint.
+    os.system("py -m notebook")  # Press Ctrl+F8 to toggle the breakpoint.
 
 
 # Press the green button in the gutter to run the script.

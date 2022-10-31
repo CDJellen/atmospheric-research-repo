@@ -3,5 +3,9 @@ pandas
 numpy
 tensorflow
 sklearn
+scipy
 matplotlib
 seaborn
+ndbc-api
+yapf
+astral

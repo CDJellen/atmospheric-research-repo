@@ -8,12 +8,12 @@ def sadotMM_Pred(df):
     :param df:
     :return:
     """
-    T = df.Air_Temperature.values #Temperature in C
+    T = df.Air_Temperature.values  #Temperature in C
     T = T + 273.15
-    U = df.Wind_Speed.values #Wind Speed in m/s
+    U = df.Wind_Speed.values  #Wind Speed in m/s
     #U_Gust = df_plot.Wind_Speed_Gust.values #Wind Speed in m/s
-    RH = df.Relative_Humidity.values #Relative Humidity Percent
-    W = df.Temporal_Hour_Weight_Weighted.values #Temporal Hour Weight
+    RH = df.Relative_Humidity.values  #Relative Humidity Percent
+    W = df.Temporal_Hour_Weight_Weighted.values  #Temporal Hour Weight
     #W = W/12
 
     a1 = -1.58e-15
@@ -26,9 +26,12 @@ def sadotMM_Pred(df):
     d3 = -2.8e-17
     e = -7.44e-14
 
-    mdl_2_pred_Cn2 = (a1*W + b1*T + c1*RH + c2*(RH*RH) + c3*(RH*RH*RH) + d1*(U) + d2*(U*U) + d3*(U*U*U) + e) * ((3/15)** (-2/3))
+    mdl_2_pred_Cn2 = (a1 * W + b1 * T + c1 * RH + c2 * (RH * RH) + c3 *
+                      (RH * RH * RH) + d1 * (U) + d2 * (U * U) + d3 *
+                      (U * U * U) + e) * ((3 / 15)**(-2 / 3))
 
     return (mdl_2_pred_Cn2[:])
+
 
 def sadotOMM_Pred(df):
     """
@@ -36,12 +39,12 @@ def sadotOMM_Pred(df):
     :param df:
     :return:
     """
-    T = df.Air_Temperature.values #Temperature in C
+    T = df.Air_Temperature.values  #Temperature in C
     T = T + 273.15
-    U = df.Wind_Speed.values #Wind Speed in m/s
+    U = df.Wind_Speed.values  #Wind Speed in m/s
     #U_Gust = df_plot.Wind_Speed_Gust.values #Wind Speed in m/s
-    RH = df.Relative_Humidity.values #Relative Humidity Percent
-    W = df.Temporal_Hour_Weight.values #Temporal Hour Weight
+    RH = df.Relative_Humidity.values  #Relative Humidity Percent
+    W = df.Temporal_Hour_Weight.values  #Temporal Hour Weight
     #W = W/12
 
     a1 = -1.58e-15
@@ -54,10 +57,13 @@ def sadotOMM_Pred(df):
     d3 = -2.8e-17
     e = -7.44e-14
 
-    mdl_2_pred_Cn2 = (a1*W + b1*T + c1*RH + c2*(RH*RH) + c3*(RH*RH*RH) + d1*(U) + d2*(U*U) + d3*(U*U*U) + e  )  * ((3/15)** (-2/3))
+    mdl_2_pred_Cn2 = (a1 * W + b1 * T + c1 * RH + c2 * (RH * RH) + c3 *
+                      (RH * RH * RH) + d1 * (U) + d2 * (U * U) + d3 *
+                      (U * U * U) + e) * ((3 / 15)**(-2 / 3))
     #mdl_2_pred_Cn2_Gust = a1*W + b1*T + c1*RH + c2*(RH*RH) + c3*(RH*RH*RH) + d1*(U_Gust) + d2*(U_Gust*U_Gust) + d3*(U_Gust*U_Gust*U_Gust) + e
 
     return (mdl_2_pred_Cn2[:])
+
 
 def oermann_2014_pred(df):
     """
@@ -65,11 +71,11 @@ def oermann_2014_pred(df):
     :param df:
     :return:
     """
-    T_gnd = df.Air_Water_Temperature_Difference.values*(-1) #Temperature in C
-    T_air = df.Air_Temperature.values*0.05 # temperature in C
-    WS = df.Wind_Speed.values #Wind Speed in m/s
-    RH = df.Relative_Humidity.values #Relative Humidity Percent
-    SF = df.Solar_Radiation.values #Temporal Hour Weight
+    T_gnd = df.Air_Water_Temperature_Difference.values * (-1)  #Temperature in C
+    T_air = df.Air_Temperature.values * 0.05  # temperature in C
+    WS = df.Wind_Speed.values  #Wind Speed in m/s
+    RH = df.Relative_Humidity.values  #Relative Humidity Percent
+    SF = df.Solar_Radiation.values  #Temporal Hour Weight
 
     a1 = -1.58e-15
     b1 = 2.74e-16
@@ -81,9 +87,17 @@ def oermann_2014_pred(df):
     d3 = -2.8e-17
     e = -3.57e-13
 
-    mdl_2_pred_Cn2 = e + ( (-2.95e-14)*T_air+(5.20e-15)*(T_air*T_air)+(-9.99e-17)*(T_air*T_air*T_air) ) + ( (-1.45e-16)*SF + 1.36e-18*SF*SF - 7.21e-22*SF*SF*SF ) + ( 7.41e-14*WS -(1.08e-14)*WS*WS + 3.71e-16*WS*WS*WS ) + ( 1.50e-13*T_air + 4.11e-13*T_air*T_air - 5.69e-13*T_air*T_air*T_air ) + ( 1.44e-14*RH -1.86e-16*RH*RH + 6.64e-19*RH*RH*RH )
+    mdl_2_pred_Cn2 = e + (
+        (-2.95e-14) * T_air + (5.20e-15) * (T_air * T_air) + (-9.99e-17) *
+        (T_air * T_air * T_air)) + (
+            (-1.45e-16) * SF + 1.36e-18 * SF * SF - 7.21e-22 * SF * SF * SF
+        ) + (7.41e-14 * WS - (1.08e-14) * WS * WS + 3.71e-16 * WS * WS * WS) + (
+            1.50e-13 * T_air + 4.11e-13 * T_air * T_air -
+            5.69e-13 * T_air * T_air * T_air) + (
+                1.44e-14 * RH - 1.86e-16 * RH * RH + 6.64e-19 * RH * RH * RH)
 
-    return (mdl_2_pred_Cn2[:])**(4/3)
+    return (mdl_2_pred_Cn2[:])**(4 / 3)
+
 
 def wangMMM_Pred(df):
     """
@@ -129,11 +143,14 @@ def wangMMM_Pred(df):
     bc2 = 0.0229636
     bc3 = -0.000429867
 
-    mdl_3_pred_Cn2 = 1e-14 * (
-                e + (a1 * U) + (b1 * T) + (c1 * RH) + (a2 * U * U) + (ab1 * U * T) + (ac1 * RH * U) + (bc1 * T * RH) + (
-                    a3 * U * U * U) + (b3 * T * T * T) + (bc2 * T * RH * RH) + (c3 * RH * RH * RH) + (
-                            a4 * U * U * U * U) + (ab2 * U * U * T * T) + (ac2 * U * U * RH * RH) + (
-                            b4 * T * T * T * T) + (bc3 * T * T * RH * RH) + (c2 * RH))
+    mdl_3_pred_Cn2 = 1e-14 * (e + (a1 * U) + (b1 * T) + (c1 * RH) +
+                              (a2 * U * U) + (ab1 * U * T) + (ac1 * RH * U) +
+                              (bc1 * T * RH) + (a3 * U * U * U) +
+                              (b3 * T * T * T) + (bc2 * T * RH * RH) +
+                              (c3 * RH * RH * RH) + (a4 * U * U * U * U) +
+                              (ab2 * U * U * T * T) + (ac2 * U * U * RH * RH) +
+                              (b4 * T * T * T * T) + (bc3 * T * T * RH * RH) +
+                              (c2 * RH))
 
     return (mdl_3_pred_Cn2[:])
 
@@ -178,9 +195,12 @@ def rajEQ1_Pred(df):
     # temporal hour weight parameters
     f1 = -2.46
 
-    mdl_4_pred_Cn2 = 1e-14 * (
-                e + U * b1 + T * a1 + RH * c1 + U * U * b2 + ab1 * U * T + bc1 * U * RH + ac1 * T * RH + b3 * U * U * U + a3 * T * T * T + ac2 * T * RH * RH + c3 * RH * RH * RH)
+    mdl_4_pred_Cn2 = 1e-14 * (e + U * b1 + T * a1 + RH * c1 + U * U * b2 +
+                              ab1 * U * T + bc1 * U * RH + ac1 * T * RH +
+                              b3 * U * U * U + a3 * T * T * T +
+                              ac2 * T * RH * RH + c3 * RH * RH * RH)
     return (mdl_4_pred_Cn2[:])
+
 
 def BKB_pred(df):
     """
@@ -210,6 +230,7 @@ def BKB_pred(df):
 
     mdl_4_pred_Cn2 = w * W + a * exp((-1) * T) + b1 * U + c1 * RH + e
     return (mdl_4_pred_Cn2[:])
+
 
 def BKB_2_pred(df):
     """
@@ -242,5 +263,5 @@ def BKB_2_pred(df):
     w = 3.8e-14
 
     mdl_4_pred_Cn2 = w * W + a * T + (b1 * U + b2 * U * U + b3 * U * U * U) + (
-                c1 * RH + c2 * RH * RH + c3 * RH * RH * RH)
+        c1 * RH + c2 * RH * RH + c3 * RH * RH * RH)
     return (mdl_4_pred_Cn2[:])

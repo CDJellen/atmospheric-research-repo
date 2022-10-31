@@ -1,0 +1,6 @@
+coveralls
+httpretty
+pytest
+pytest-cov
+pyyaml
+pyarrow
